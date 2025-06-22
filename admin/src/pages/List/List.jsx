@@ -6,7 +6,7 @@ import { url } from "../../assets/assets";
 const List = () => {
   const [list, setList] = useState([]);
   const fetchList = async () => {
-    const url = "http://localhost:4000";
+    const url = "https://vista-backend-m850.onrender.com";
     const response = await axios.get(`${url}/api/food/list`);
 
     if (response.data.success) {
