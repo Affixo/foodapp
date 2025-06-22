@@ -44,7 +44,7 @@ const WalletAdminPanel = () => {
     try {
       setLoading(true);
       const res = await axios.get(
-        `http://localhost:4000/api/admin/wallet/user/${trimmedId}`
+        `https://vista-backend-m850.onrender.com/api/admin/wallet/user/${trimmedId}`
       );
       console.log("Selected User:", res.data.user);
       setSelectedUser(res.data.user);
@@ -70,7 +70,7 @@ const WalletAdminPanel = () => {
     try {
       setLoading(true);
       const res = await axios.post(
-        "http://localhost:4000/api/admin/wallet/update",
+        "https://vista-backend-m850.onrender.com/api/admin/wallet/update",
         {
           userId: selectedUser._id,
           amount: amt,
