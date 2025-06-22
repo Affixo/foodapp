@@ -4,7 +4,7 @@ import axios from "axios";
 export const StoreContext = createContext(null);
 
 const StoreContextProvider = (props) => {
-  const url = "http://localhost:4000";
+  const url = https://vista-backend-m850.onrender.com;
   const [userId, setuserId] = useState(null);
   const [wallet, setWallet] = useState(null);
   const [cartItems = {}, setCartItems] = useState({});
