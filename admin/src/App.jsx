@@ -10,7 +10,7 @@ import WalletAdminPanel from "./pages/Wallet/Walletadminpanel";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const App = () => {
-  const url = "http://localhost:4000/";
+  const url = "https://vista-backend-m850.onrender.com";
   return (
     <div>
       <ToastContainer />
