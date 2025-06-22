@@ -1,0 +1,22 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 4%;
+  background-color: white; /* Optional: ensure background contrast */
+}
+
+.navbar .logo {
+  height: 60px;
+  width: auto;
+  object-fit: contain;
+}
+.navbar h1 {
+  color: chocolate;
+}
+.navbar .profile {
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
