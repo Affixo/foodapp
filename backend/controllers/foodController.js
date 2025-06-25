@@ -7,23 +7,27 @@ const addFood = async (req, res) => {
   console.log("req", req.body, req.file);
   console.log("Received file:", req.file); // Debugging
 
-  if (!req.file) {
+  if (!req.file || !req.file.path) {
     return res
       .status(400)
       .json({ success: false, message: "No file uploaded!" });
   }
-  let image_filename = `${req.file.filename}`;
 
   const food = new foodModel({
     name: req.body.name,
     description: req.body.description,
     price: req.body.price,
     category: req.body.category,
-    image: image_filename,
+    image: req.file.path, // ✅ Cloudinary URL
   });
+
   try {
     await food.save();
-    res.json({ success: true, message: "Food Added" });
+    res.json({
+      success: true,
+      message: "Food Added",
+      imageUrl: req.file.path, // optional: return URL
+    });
   } catch (error) {
     console.log(error);
     res.json({ success: false, message: "Error" });
@@ -34,7 +38,15 @@ const addFood = async (req, res) => {
 const listFood = async (req, res) => {
   try {
     const foods = await foodModel.find({});
-    res.json({ success: true, data: foods });
+    const updatedFoods = foods.map((food) => {
+      // Add fallback for old image names
+      if (!food.image.startsWith("http")) {
+        food.image = `http://localhost:4000/uploads/${food.image}`;
+      }
+      return food;
+    });
+
+    res.json({ success: true, data: updatedFoods });
   } catch (error) {
     console.log(error);
     res.json({ success: false, message: "Error" });
