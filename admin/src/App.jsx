@@ -6,11 +6,11 @@ import Add from "./pages/Add/Add";
 
 import List from "./pages/List/List";
 import Orders from "./pages/Orders/Orders";
-import WalletAdminPanel from "./pages/Wallet/Walletadminpanel";
+import WalletAdminPanel from "./pages/Wallet/WalletAdminPanel";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const App = () => {
-  const url = "http://localhost:4000/";
+  const url = "https://vista-backend-m850.onrender.com";
   return (
     <div>
       <ToastContainer />
