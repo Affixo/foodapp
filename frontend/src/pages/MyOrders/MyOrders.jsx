@@ -6,7 +6,7 @@ import { assets } from "../../assets/assets";
 import { toast } from "react-toastify";
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:4000"); // Adjust if hosted
+const socket = io(import.meta.env.VITE_SERVER_URL); // Adjust if hosted
 
 const MyOrders = () => {
   const { url, token, userId } = useContext(StoreContext);
