@@ -38,10 +38,11 @@ const addFood = async (req, res) => {
 const listFood = async (req, res) => {
   try {
     const foods = await foodModel.find({});
+    const baseUrl = `${req.protocol}://${req.get("host")}`;
     const updatedFoods = foods.map((food) => {
       // Add fallback for old image names
       if (!food.image.startsWith("http")) {
-        food.image = `http://localhost:4000/uploads/${food.image}`;
+        food.image = `${baseUrl}/uploads/${food.image}`;
       }
       return food;
     });
