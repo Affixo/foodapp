@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 backend/.env
+clowd.txt
 
 # Editor directories and files
 .vscode/*

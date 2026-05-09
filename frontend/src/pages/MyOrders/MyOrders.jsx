@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import "./MyOrders.css";
 import axios from "axios";
 import { StoreContext } from "../../context/StoreContext";
@@ -6,45 +6,47 @@ import { assets } from "../../assets/assets";
 import { toast } from "react-toastify";
 import { io } from "socket.io-client";
 
-const socket = io(import.meta.env.VITE_SERVER_URL); // Adjust if hosted
-
 const MyOrders = () => {
   const { url, token, userId } = useContext(StoreContext);
   const [data, setData] = useState([]);
 
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
+    if (!token || !userId) return;
+
     const response = await axios.post(
       url + "/api/order/userorders",
       { userId },
       { headers: { token } }
     );
-    setData(response.data.data);
-  };
+
+    setData(response.data.data || []);
+  }, [token, userId, url]);
 
   useEffect(() => {
-    if (token) {
-      fetchOrders();
-    }
+    fetchOrders();
+  }, [fetchOrders]);
 
-    // 🔔 Listen for real-time event
-    socket.on("orderReady", ({ orderId }) => {
-      const isUserOrder = data.some((order) => order._id === orderId);
-      if (isUserOrder) {
-        toast.success("Your food is ready! 🍽️");
-        fetchOrders(); // Refresh status
-      }
+  useEffect(() => {
+    if (!token) return;
+
+    const socket = io(import.meta.env.VITE_SERVER_URL || url);
+
+    socket.on("orderReady", () => {
+      toast.success("Your food is ready!");
+      fetchOrders();
     });
 
-    // 🔐 Cleanup
-    return () => socket.off("orderReady");
-  }, [token, data]);
+    return () => {
+      socket.disconnect();
+    };
+  }, [fetchOrders, token, url]);
 
   return (
     <div className="my-orders">
       <h2>My Orders</h2>
       <div className="container">
-        {data.map((order, index) => (
-          <div key={index} className="my-orders-order">
+        {data.map((order) => (
+          <div key={order._id} className="my-orders-order">
             <img src={assets.parcel_icon} alt="" />
             <p>
               {order.items.map((item, index) =>
@@ -53,7 +55,7 @@ const MyOrders = () => {
                   : `${item.name} x ${item.quantity}, `
               )}
             </p>
-            <p>৳{order.amount}.00</p>
+            <p>BDT {Number(order.amount).toFixed(2)}</p>
             <p>Items: {order.items.length}</p>
             <p>
               <span>&#x25cf;</span> <b>{order.status}</b>
