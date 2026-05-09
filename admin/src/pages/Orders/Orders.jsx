@@ -4,8 +4,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { assets } from "../../assets/assets";
 
-const Orders = () => {
-  const url = "https://vista-backend-m850.onrender.com";
+const Orders = ({ url }) => {
   const [orders, setOrders] = useState([]);
 
   const fetchAllOrders = async () => {
@@ -46,7 +45,7 @@ const Orders = () => {
 
   useEffect(() => {
     fetchAllOrders();
-  }, []);
+  }, [url]);
 
   return (
     <div className="order add">

@@ -17,4 +17,4 @@ export const assets = {
   vista_logo1,
 };
 
-export const url = "https://vista-backend-m850.onrender.com";
+export const url = import.meta.env.VITE_API_URL || "http://localhost:4000";

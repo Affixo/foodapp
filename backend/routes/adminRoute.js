@@ -86,7 +86,7 @@ router.post("/wallet/update", async (req, res) => {
     res.json({
       updatedUser: {
         _id: updatedUser._id,
-        bupId: updatedUser.bupId,
+        bup_id: updatedUser.bup_id,
         name: updatedUser.name,
         email: updatedUser.email,
         wallet: {
@@ -107,7 +107,7 @@ router.get("/wallet/transactions", async (req, res) => {
   try {
     const transactions = await walletTransactionModel
       .find()
-      .populate("userId", "name email bupId")
+      .populate("userId", "name email bup_id")
       .sort({ timestamp: -1 });
 
     res.json({ success: true, data: transactions });

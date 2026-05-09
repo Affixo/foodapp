@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import "./WalletAdminPanel.css";
 
-const WalletAdminPanel = () => {
+const WalletAdminPanel = ({ url }) => {
   const [searchId, setSearchId] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [amount, setAmount] = useState("");
@@ -43,9 +43,7 @@ const WalletAdminPanel = () => {
 
     try {
       setLoading(true);
-      const res = await axios.get(
-        `https://vista-backend-m850.onrender.com/api/admin/wallet/user/${trimmedId}`
-      );
+      const res = await axios.get(`${url}/api/admin/wallet/user/${trimmedId}`);
       console.log("Selected User:", res.data.user);
       setSelectedUser(res.data.user);
       setTransactions(res.data.transactions);
@@ -70,7 +68,7 @@ const WalletAdminPanel = () => {
     try {
       setLoading(true);
       const res = await axios.post(
-        "https://vista-backend-m850.onrender.com/api/admin/wallet/update",
+        `${url}/api/admin/wallet/update`,
         {
           userId: selectedUser._id,
           amount: amt,
@@ -84,7 +82,7 @@ const WalletAdminPanel = () => {
       // Ensure consistent shape of selectedUser
       setSelectedUser({
         _id: updatedUser._id,
-        bupId: updatedUser.bup_id,
+        bup_id: updatedUser.bup_id,
         name: updatedUser.name,
         email: updatedUser.email,
         walletBalance: updatedUser.wallet.balance,
@@ -106,9 +104,16 @@ const WalletAdminPanel = () => {
   };
 
   const filteredTransactions = transactions?.filter(
-    (tx) =>
-      tx.userId?.toLowerCase().includes(txSearch.toLowerCase()) ||
-      tx.userName?.toLowerCase().includes(txSearch.toLowerCase())
+    (tx) => {
+      const userId =
+        typeof tx.userId === "object" ? tx.userId?._id : tx.userId;
+      const userName = tx.userName || tx.userId?.name || "";
+
+      return (
+        userId?.toLowerCase().includes(txSearch.toLowerCase()) ||
+        userName?.toLowerCase().includes(txSearch.toLowerCase())
+      );
+    }
   );
 
   return (
@@ -265,9 +270,10 @@ const WalletAdminPanel = () => {
                 <tbody>
                   {filteredTransactions?.map((tx) => (
                     <tr key={tx._id}>
-                      <td>{tx.timestamp}</td>
+                      <td>{new Date(tx.timestamp).toLocaleString()}</td>
                       <td>
-                        {tx.userName} ({tx.userId})
+                        {tx.userName || tx.userId?.name || selectedUser?.name} (
+                        {typeof tx.userId === "object" ? tx.userId?._id : tx.userId})
                       </td>
                       <td className="wap-capitalize">{tx.operation}</td>
                       <td

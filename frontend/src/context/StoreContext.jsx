@@ -4,7 +4,7 @@ import axios from "axios";
 export const StoreContext = createContext(null);
 
 const StoreContextProvider = (props) => {
-  const url = "https://vista-backend-m850.onrender.com";
+  const url = import.meta.env.VITE_API_URL || "http://localhost:4000";
   const [userId, setuserId] = useState(null);
   const [wallet, setWallet] = useState(null);
   const [cartItems = {}, setCartItems] = useState({});
@@ -25,7 +25,10 @@ const StoreContextProvider = (props) => {
     }
   };
   const removeFromCart = async (itemId) => {
-    setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] - 1 }));
+    setCartItems((prev) => {
+      const nextQuantity = Math.max((prev[itemId] || 0) - 1, 0);
+      return { ...prev, [itemId]: nextQuantity };
+    });
     if (token) {
       await axios.post(
         url + "/api/cart/remove",
@@ -40,10 +43,19 @@ const StoreContextProvider = (props) => {
     for (const item in cartItems) {
       if (cartItems[item] > 0) {
         let itemInfo = food_list.find((product) => product._id === item);
-        totalAmount += itemInfo.price * cartItems[item];
+        if (itemInfo) {
+          totalAmount += itemInfo.price * cartItems[item];
+        }
       }
     }
     return totalAmount;
+  };
+
+  const getCartItemCount = () => {
+    return Object.values(cartItems).reduce(
+      (total, quantity) => total + Math.max(Number(quantity) || 0, 0),
+      0
+    );
   };
   const fetchFoodList = async () => {
     const response = await axios.get(url + "/api/food/list");
@@ -89,6 +101,7 @@ const StoreContextProvider = (props) => {
     addToCart,
     removeFromCart,
     getTotalCartAmount,
+    getCartItemCount,
     url,
     token,
     setToken,

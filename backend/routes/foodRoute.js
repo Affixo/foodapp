@@ -32,7 +32,25 @@ const foodRouter = express.Router();
 // });
 
 // const upload = multer({ storage: storage });
-foodRouter.post("/add", upload.single("image"), addFood);
+foodRouter.post(
+  "/add",
+  (req, res, next) => {
+    upload.single("image")(req, res, (error) => {
+      if (error) {
+        console.error("Food image upload failed:", error);
+        return res.status(500).json({
+          success: false,
+          message:
+            error.message ||
+            "Image upload failed. Check Cloudinary environment variables.",
+        });
+      }
+
+      next();
+    });
+  },
+  addFood
+);
 foodRouter.get("/list", listFood);
 foodRouter.post("/remove", removeFood);
 

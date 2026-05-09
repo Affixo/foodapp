@@ -5,8 +5,15 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const PlaceOrder = () => {
-  const { getTotalCartAmount, token, food_list, cartItems, url, userId } =
-    useContext(StoreContext);
+  const {
+    getTotalCartAmount,
+    token,
+    food_list,
+    cartItems,
+    setCartItems,
+    url,
+    userId,
+  } = useContext(StoreContext);
 
   const [walletBalance, setWalletBalance] = useState(0);
   //const [data, setData] = useState({});
@@ -69,9 +76,10 @@ const PlaceOrder = () => {
       });
 
       if (response.data.success) {
+        setCartItems({});
         navigate("/");
       } else {
-        alert("Error placing order");
+        alert(response.data.message || "Error placing order");
       }
     } catch (error) {
       console.error("Order placement error:", error);

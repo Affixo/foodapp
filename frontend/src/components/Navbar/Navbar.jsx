@@ -1,12 +1,13 @@
 import React, { useContext, useState, useEffect } from "react";
 import "./Navbar.css";
-import { assets, food_list } from "../../assets/assets";
+import { assets } from "../../assets/assets";
 import { Link, useNavigate } from "react-router-dom";
 import { StoreContext } from "../../context/StoreContext";
 
 const Navbar = ({ setShowLogin }) => {
   const [menu, setMenu] = useState("home");
-  const { getTotalCartAmount, token, setToken } = useContext(StoreContext);
+  const { getCartItemCount, token, setToken, food_list, url } =
+    useContext(StoreContext);
   const navigate = useNavigate();
 
   const [searchText, setSearchText] = useState("");
@@ -14,8 +15,30 @@ const Navbar = ({ setShowLogin }) => {
 
   const logout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("bup_id");
+    localStorage.removeItem("wallet");
     setToken("");
     navigate("/");
+  };
+
+  const scrollToSection = (sectionId, activeMenu) => {
+    setMenu(activeMenu);
+    navigate("/");
+    setTimeout(() => {
+      document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
+    }, 0);
+  };
+
+  const handleResultClick = (id) => {
+    setSearchText("");
+    setSearchResults([]);
+    navigate("/");
+    setTimeout(() => {
+      document.getElementById(`food-${id}`)?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }, 0);
   };
 
   // Merge sort algorithm
@@ -50,13 +73,7 @@ const Navbar = ({ setShowLogin }) => {
       item.name.toLowerCase().includes(searchText.toLowerCase())
     );
     setSearchResults(filtered.slice(0, 5));
-  }, [searchText]);
-
-  // const handleResultClick = (id) => {
-  //   navigate(`/food/${id}`);
-  //   setSearchText("");
-  //   setSearchResults([]);
-  // };
+  }, [searchText, food_list]);
 
   return (
     <div className="navbar">
@@ -73,15 +90,21 @@ const Navbar = ({ setShowLogin }) => {
           home
         </Link>
         <a
-          href="#explore-menu"
-          onClick={() => setMenu("menu")}
+          href="/#explore-menu"
+          onClick={(event) => {
+            event.preventDefault();
+            scrollToSection("explore-menu", "menu");
+          }}
           className={menu === "menu" ? "active" : ""}
         >
           menu
         </a>
         <a
-          href="#footer"
-          onClick={() => setMenu("contact-us")}
+          href="/#footer"
+          onClick={(event) => {
+            event.preventDefault();
+            scrollToSection("footer", "contact-us");
+          }}
           className={menu === "contact-us" ? "active" : ""}
         >
           contact us
@@ -107,8 +130,19 @@ const Navbar = ({ setShowLogin }) => {
           {searchResults.length > 0 && (
             <div className="navbar-search-dropdown">
               {searchResults.map((item) => (
-                <div key={item._id} className="navbar-search-item">
-                  <img src={item.image} alt={item.name} />
+                <div
+                  key={item._id}
+                  className="navbar-search-item"
+                  onClick={() => handleResultClick(item._id)}
+                >
+                  <img
+                    src={
+                      item.image?.startsWith("http")
+                        ? item.image
+                        : `${url}/uploads/${item.image}`
+                    }
+                    alt={item.name}
+                  />
                   <span>{item.name}</span>
                 </div>
               ))}
@@ -116,10 +150,12 @@ const Navbar = ({ setShowLogin }) => {
           )}
         </div>
 
-        <Link to="/cart">
-          <img src={assets.basket_icon} alt="" />
-        </Link>
-        <div className={getTotalCartAmount() === 0 ? "" : "dot"}></div>
+        <div className="navbar-cart-icon">
+          <Link to="/cart">
+            <img src={assets.basket_icon} alt="" />
+          </Link>
+          <div className={getCartItemCount() === 0 ? "" : "dot"}></div>
+        </div>
 
         {!token ? (
           <button onClick={() => setShowLogin(true)}>sign in</button>

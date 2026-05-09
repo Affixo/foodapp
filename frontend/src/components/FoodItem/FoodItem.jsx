@@ -11,7 +11,7 @@ const FoodItem = ({ id, name, price, description, image }) => {
   } = useContext(StoreContext);
 
   return (
-    <div className="food-item">
+    <div className="food-item" id={`food-${id}`}>
       <div className="food-item-img-container">
         <img
           className="food-item-image"

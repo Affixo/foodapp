@@ -10,7 +10,7 @@ import WalletAdminPanel from "./pages/Wallet/WalletAdminPanel";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const App = () => {
-  const url = "https://vista-backend-m850.onrender.com";
+  const url = import.meta.env.VITE_API_URL || "http://localhost:4000";
   return (
     <div>
       <ToastContainer />

@@ -24,9 +24,6 @@ app.use(express.json());
 app.use(cors());
 app.use(morgan("combined"));
 
-// DB Connection
-connectDB();
-
 // Static
 app.use("/images", express.static("uploads"));
 
@@ -39,7 +36,12 @@ app.use("/api/admin", adminRouter);
 app.use("/uploads", express.static("uploads"));
 app.get("/", (req, res) => res.send("API Working"));
 
-server.listen(port, () => {
-  console.log(`Server started on http://localhost:${port}`);
-});
-//mongodb+srv://vista-app:01534790692@cluster0.fhtpm5q.mongodb.net/?
+try {
+  await connectDB();
+
+  server.listen(port, () => {
+    console.log(`Server started on http://localhost:${port}`);
+  });
+} catch {
+  process.exit(1);
+}
