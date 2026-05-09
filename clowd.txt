@@ -1,10 +1,1 @@
-clowd
-Cloud name	
-dcuk8uri9
-API key	
-592684916823663
-API secret	
-dzP6V3SY7y0VUHI8XuMbWG7Bhl0
 
-API environment variable	
-CLOUDINARY_URL=cloudinary://592684916823663:dzP6V3SY7y0VUHI8XuMbWG7Bhl0@dcuk8uri9
